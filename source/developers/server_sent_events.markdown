@@ -18,7 +18,8 @@ A requirement on the client-side is existing support for the [EventSource](https
 There are various ways to access the stream. One is `curl`:
 
 ```bash
-$ curl -X GET -H "x-ha-access: YOUR_PASSWORD" http://localhost:8123/api/stream
+$ curl -X GET -H "x-ha-access: YOUR_PASSWORD" \
+       -H "Content-Type: application/json" http://localhost:8123/api/stream
 ```
 
 For more comfort put the HTML snippet below in a file `sse.html` in your `www` folder of your Home Assistant configuration directory (`.homeassistant`)
@@ -39,7 +40,7 @@ For more comfort put the HTML snippet below in a file `sse.html` in your `www` f
 </html>
 ```
 
-Visit [https://localhost:8123/local/sse.html](https://localhost:8123/local/sse.html) to see the stream of events.
+Visit [http://localhost:8123/local/sse.html](http://localhost:8123/local/sse.html) to see the stream of events.
 
 ### {% linkable_title Example %}
 

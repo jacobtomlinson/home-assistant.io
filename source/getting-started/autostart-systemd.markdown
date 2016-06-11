@@ -1,7 +1,7 @@
 ---
 layout: page
-title: "Autostart using SystemD"
-description: "Instructions how to setup Home Assistant to launch on boot using SystemD."
+title: "Autostart using systemd"
+description: "Instructions how to setup Home Assistant to launch on boot using systemd."
 date: 2015-9-1 22:57
 sidebar: true
 comments: false
@@ -9,7 +9,7 @@ sharing: true
 footer: true
 ---
 
-Newer linux distributions are trending towards using systemd for managing daemons. Typically, systems based on Fedora or Debian 8 or later use systemd. This includes Ubuntu releases including and after 15.04, CentOS, and Red Hat. If you are unsure if your system is using `systemd`, you may check with the following command:
+Newer linux distributions are trending towards using `systemd` for managing daemons. Typically, systems based on Fedora, ArchLinux, or Debian (8 or later) use `systemd`. This includes Ubuntu releases including and after 15.04, CentOS, and Red Hat. If you are unsure if your system is using `systemd`, you may check with the following command:
 
 ```bash
 $ ps -p 1 -o comm=
@@ -49,7 +49,7 @@ $ sudo systemctl enable home-assistant@[your user]
 $ sudo systemctl start home-assistant@[your user]
 ```
 
-If everything went well, `sudo systemctl start home-assistant` should give you a positive feedback.
+If everything went well, `sudo systemctl start home-assistant@[your user]` should give you a positive feedback.
 
 ```bash
 $ sudo systemctl status home-assistant@[your user] -l

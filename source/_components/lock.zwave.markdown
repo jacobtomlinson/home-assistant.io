@@ -8,7 +8,7 @@ comments: false
 sharing: true
 footer: true
 logo: z-wave.png
-ha_category: Locks
+ha_category: Lock
 ha_release: 0.19
 ---
 

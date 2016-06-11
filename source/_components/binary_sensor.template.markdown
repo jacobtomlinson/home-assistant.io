@@ -30,6 +30,8 @@ Configuration variables:
   - **friendly_name** (*Optional*): Name to use in the Frontend.
   - **sensor_class** (*Optional*): The [type/class](/components/binary_sensor/) of the sensor to set the icon in the frontend.
   - **value_template** (*Optional*): Defines a [template](/topics/templating/) to extract a value from the payload.
+  - **warnings** (*Optional*): Turn off warnings (useful if the sensor is loaded before devices it depends on).
+  - **entity_id** (*Optional*): Add a list of entity_ids so the sensor only reacts to state changes of these entities. This will reduce the number of times the sensor will try to update it's state.
 
 ## {% linkable_title Examples %}
 
@@ -44,7 +46,24 @@ sensor:
   platform: template
   sensors:
       furnace_on:
-        value_template: {{ states.sensor.furnace.state > 2.5 }}
+        value_template: {% raw %}{{ states.sensor.furnace.state > 2.5 }}{% endraw %}
         friendly_name: 'Furnace Running
         sensor_class: heat
+```
+
+
+### {% linkable_title Switch as sensor %}
+
+Some movement sensors and door/window sensors will apear as a switch. By using a template binary sensor, the switch can be displayed as a binary sensors. The original switch can then be hidden by [customizing.](/getting-started/customizing-devices/)
+
+```yaml
+binary_sensor: 
+  platform: template 
+  sensors:
+    movement:
+      value_template: {% raw %}"{{ states.switch.movement.state == 'on' }}"{% endraw %}
+      sensor_class: motion
+    door:
+      value_template: {% raw %}"{{ states.switch.door.state == 'on' }}"{% endraw %} 
+      sensor_class: opening
 ```

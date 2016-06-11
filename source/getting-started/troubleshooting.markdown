@@ -39,8 +39,8 @@ In newer Linux distributions (at least Fedora 22/CentOS 7) the access to a host 
 
 To fix this you will need to open your machine's firewall for TCP traffic over port 8123. The method for doing this will vary depending on your operating system and the firewall you have installed. Below are some suggestions to try. Google is your friend here.
 
-[Windows instructions](http://windows.microsoft.com/en-us/windows/open-port-windows-firewall#1TC=windows-7)
-[Mac OSX instructions](https://support.apple.com/en-us/HT201642)
+- [Windows instructions](http://windows.microsoft.com/en-us/windows/open-port-windows-firewall#1TC=windows-7)
+- [Mac OSX instructions](https://support.apple.com/en-us/HT201642)
 
 For systems with **firewalld** (Fedora, CentOS/RHEL, etc.):
 
@@ -68,12 +68,5 @@ After upgrading to a new version, you may notice your browser gets stuck at the 
 Android Chrome 
 chrome -> settings -> site settings -> storage -> search for your URL for home assistant-> "clear & reset"
 
-
-#### {% linkable_title Run the development version %}
-If you want to stay on top of the development of Home Assistant then you can upgrade to the `dev` branch. This can result in an unstable system, loss of data, etc. etc.
-
-```bash
-$ pip3 install --upgrade git+git://github.com/balloob/home-assistant.git@dev
-```
 
 ### [&laquo; Back to Getting Started](/getting-started/)
