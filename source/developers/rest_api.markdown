@@ -39,7 +39,7 @@ print(response.text)
 ```
 
 <p class='note'>
-You can append <code>?api_password=YOUR_PASSWORD</code> to any url to log in automatically.
+You can append `?api_password=YOUR_PASSWORD` to any url to log in automatically.
 </p>
 
 Successful calls will return status code 200 or 201. Other status codes that can return are:
@@ -54,7 +54,7 @@ Successful calls will return status code 200 or 201. Other status codes that can
 The API supports the following actions:
 
 #### {% linkable_title GET /api/ %}
-Returns message if API is up and running.
+Returns a message if the API is up and running.
 
 ```json
 {
@@ -77,21 +77,29 @@ Returns the current configuration as JSON.
     "components": [
         "recorder",
         "http",
-        "sensor.time_date",
+        "weather.openweathermap",
         "api",
+        "websocket_api",
         "frontend",
+        "sensor.time_date",
         "sun",
-        "logbook",
-        "history",
+        "device_tracker",
         "group",
         "automation"
     ],
-    "latitude": 44.1234,
+    "config_dir": "/home/ha/.homeassistant",
+    "elevation": 590,
+    "latitude": 45.92,
     "location_name": "Home",
-    "longitude": 5.5678,
-    "temperature_unit": "\u00b0C",
+    "longitude": 6.52,
     "time_zone": "Europe/Zurich",
-    "version": "0.8.0.dev0"
+    "unit_system": {
+        "length": "km",
+        "mass": "g",
+        "temperature": "\\u00b0C",
+        "volume": "L"
+    },
+    "version": "0.37.0.dev0"
 }
 ```
 
@@ -141,7 +149,7 @@ $ curl -X GET -H "x-ha-access: YOUR_PASSWORD" \
 ```
 
 #### {% linkable_title GET /api/events %}
-Returns an array of event objects. Each event object contain event name and listener count.
+Returns an array of event objects. Each event object contains event name and listener count.
 
 ```json
 [
@@ -191,8 +199,8 @@ $ curl -X GET -H "x-ha-access: YOUR_PASSWORD" \
        -H "Content-Type: application/json" http://localhost:8123/api/services
 ```
 
-#### {% linkable_title GET /api/history %}
-Returns an array of state changes in the past. Each object contains further detail for the entities.
+#### {% linkable_title GET /api/history/period/&lt;timestamp> %}
+Returns an array of state changes in the past. Each object contains further details for the entities.
 
 ```json
 [
@@ -204,7 +212,7 @@ Returns an array of state changes in the past. Each object contains further deta
             },
             "entity_id": "sensor.weather_temperature",
             "last_changed": "2016-02-06T22:15:00+00:00",
-            "last_updated": "2016-02-06T22:15:00+00:00"",
+            "last_updated": "2016-02-06T22:15:00+00:00",
             "state": "-3.9"
         },
         {
@@ -226,13 +234,13 @@ Sample `curl` commands:
 ```bash
 $ curl -X GET -H "x-ha-access: YOUR_PASSWORD" \
        -H "Content-Type: application/json" \
-       http://localhost:8123/api/history/period/2016-02-06
+       http://localhost:8123/api/history/period/2016-12-29T00:00:00+02:00
 ```
 
 ```bash
 $ curl -X GET -H "x-ha-access: YOUR_PASSWORD" \
        -H "Content-Type: application/json" \
-       http://localhost:8123/api/history/period/2016-02-06?filter_entity_id=sensor.temperature
+       http://localhost:8123/api/history/period/2016-12-29T00:00:00+02:00?filter_entity_id=sensor.temperature
 ```
 
 #### {% linkable_title GET /api/states %}
@@ -332,7 +340,7 @@ Expects a JSON object that has at least a state attribute:
 }
 ```
 
-Return code is 200 if the entity existed, 201 if the state of a new entity was set. A location header will be returned with the url of the new resource. The response body will contain a JSON encoded State object.
+The return code is 200 if the entity existed, 201 if the state of a new entity was set. A location header will be returned with the URL of the new resource. The response body will contain a JSON encoded State object.
 
 ```json
 {
@@ -342,7 +350,7 @@ Return code is 200 if the entity existed, 201 if the state of a new entity was s
     },
     "entity_id": "sun.sun",
     "last_changed": "2016-05-30T21:43:29.204838+00:00",
-    "last_updated": "2016-05-30T21:47:30.533530+00:00"
+    "last_updated": "2016-05-30T21:47:30.533530+00:00",
     "state": "below_horizon"
 }
 ```
@@ -363,7 +371,7 @@ You can pass an optional JSON object to be used as `event_data`.
 
 ```json
 {
-    next_rising":"2016-05-31T03:39:14+00:00",
+    "next_rising":"2016-05-31T03:39:14+00:00",
 }
 ```
 
@@ -376,7 +384,7 @@ Returns a message if successful.
 ```
 
 #### {% linkable_title POST /api/services/&lt;domain>/&lt;service> %}
-Calls a service within a specific domain. Will return when the service has been executed or 10 seconds has past, whichever comes first.
+Calls a service within a specific domain. Will return when the service has been executed or after 10 seconds, whichever comes first.
 
 You can pass an optional JSON object to be used as `service_data`.
 
@@ -415,7 +423,7 @@ $ curl -X POST -H "x-ha-access: YOUR_PASSWORD" \
 ```
 
 <p class='note'>
-The result will include any changed states that changed while the service was being executed, even if their change was the result of something else happening in the system.
+The result will include any states that changed while the service was being executed, even if their change was the result of something else happening in the system.
 </p>
 
 #### {% linkable_title POST /api/template %}
@@ -442,11 +450,11 @@ $ curl -X POST -H "x-ha-access: YOUR_PASSWORD" \
 ```
 
 #### {% linkable_title POST /api/event_forwarding %}
-Setup event forwarding to another Home Assistant instance.
+Set up event forwarding to another Home Assistant instance.
 
 Requires a JSON object that represents the API to forward to.
 
-```json
+```javascript
 {
     "host": "machine",
     "api_password": "my_super_secret_password",
@@ -454,7 +462,7 @@ Requires a JSON object that represents the API to forward to.
 }
 ```
 
-It will return a message if event forwarding was setup successful.
+It will return a message if event forwarding was set up successfully.
 
 ```json
 {
@@ -467,7 +475,7 @@ Cancel event forwarding to another Home Assistant instance.<br>
 
 Requires a JSON object that represents the API to cancel forwarding to.
 
-```json
+```javascript
 {
     "host": "machine",
     "api_password": "my_super_secret_password",
@@ -475,7 +483,7 @@ Requires a JSON object that represents the API to cancel forwarding to.
 }
 ```
 
-It will return a message if event forwarding was cancelled successful.
+It will return a message if event forwarding was cancelled successfully.
 
 ```json
 {

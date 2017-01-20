@@ -19,11 +19,10 @@ To use this device tracker in your installation, add the following to your `conf
 ```yaml
 # Example configuration.yaml entry
 device_tracker:
-  platform: mqtt
-  qos: 1
-  devices:
-    paulus_oneplus: /location/paulus
-    annetherese_n4: /location/annetherese
+  - platform: mqtt
+    devices:
+      paulus_oneplus: /location/paulus
+      annetherese_n4: /location/annetherese
 ```
 
 Configuration variables:
@@ -31,3 +30,12 @@ Configuration variables:
 - **devices** (*Required*): List of devices with their topic.
 - **qos** (*Optional*): The QoS level of the topic.
 
+
+Example JSON you can publish to the topic (e.g. via mqtt.publish service):
+
+```json
+{
+  "topic": "/location/paulus",
+  "payload": "home"
+}
+```

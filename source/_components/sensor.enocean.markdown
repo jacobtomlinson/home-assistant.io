@@ -9,13 +9,13 @@ sharing: true
 footer: true
 logo: enocean.png
 ha_category: Sensor
+ha_release: 0.21
 ---
 
 
 The `enocean` sensor platform currently only allows reading out the power measured in a Permundo PSC234 switch.
 
 To use your EnOcean device, you first have to set up your [EnOcean hub](../enocean) and then add the following to your `configuration.yaml` file:
-
 
 ```yaml
 # Example configuration.yaml entry

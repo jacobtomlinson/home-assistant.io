@@ -1,7 +1,7 @@
 ---
 layout: page
-title: "Setup Development"
-description: "Everything to get you started developing for Home Assistant."
+title: "Set up Development Environment"
+description: "Set up your environment to start developing for Home Assistant."
 date: 2014-12-21 13:32
 sidebar: true
 comments: false
@@ -9,20 +9,11 @@ sharing: true
 footer: true
 ---
 
-Home Assistant is built from the ground up to be easily-extensible by other developers using components. It uses [Python 3](https://www.python.org/) for the backend and [Polymer (Web components)](https://www.polymer-project.org/) for the frontend.
+You'll need to set up a development environment if you want to develop a new feature or component for Home Assistant. Read on to learn how to set up.
 
-Home Assistant is open-source and MIT licensed. The source can be found here:
+* Visit the [Home Assistant repository](https://github.com/home-assistant/home-assistant) and click **Fork**.
 
- - [home-assistant](https://github.com/home-assistant/home-assistant) - Python server backend
- - [home-assistant-js](https://github.com/home-assistant/home-assistant-js) - JavaScript backend powering the client
- - [home-assistant-polymer](https://github.com/home-assistant/home-assistant-polymer) - Polymer UI
-
-### {% linkable_title Starting development %}
-
-You will need to set up a development environment if you want to start developing a new feature or component for Home Assistant. Please follow these steps to get setup.
-Visit the [the Home Assistant repository](https://github.com/home-assistant/home-assistant) first and click fork in the top right.
-
-We suggest that you setup a virtual environment using [`venv`](https://docs.python.org/3.4/library/venv.html) before running the setup script.
+* Consider setting up a virtual environment using [`venv`](https://docs.python.org/3.4/library/venv.html) before running the setup script.
 
 ```bash
 $ git clone https://github.com/YOUR_GIT_USERNAME/home-assistant.git
@@ -30,70 +21,26 @@ $ cd home-assistant
 $ git remote add upstream https://github.com/home-assistant/home-assistant.git
 $ script/setup
 ```
-On Windows you can use `python setup.py develop` instead of the setup script.
 
-After following these steps, running `hass` will invoke your local installation.
+* On Windows, you can use `python setup.py develop` instead of the setup script.
 
-### {% linkable_title Testing your work %}
+* Run `hass` to invoke your local installation.
 
-Testing your work requires `tox` to be installed:
+### {% linkable_title Logging %}
 
-```bash
-$ pip3 install tox
-```
+By default logging in home-assistant is tuned for operating in
+production (set to INFO by default, with some modules set to even less
+verbose logging levels).
 
-### {% linkable_title Prevent Linter Errors %}
+You can use the [logger](/components/logger/) component to adjust
+logging to DEBUG to see even more details about what is going on.
 
-Home Assistant enforces strict [PEP8 style](https://www.python.org/dev/peps/pep-0008/) compliance on all code submitted. You can save yourself the hassle of extra commits just to fix style errors by enabling the flake8 git commit hook. It will check your code when you attempt to commit to the repo. It will block the commit if there are any style issues, giving you a chance to fix it.
+### {% linkable_title Developing on Windows %}
 
-```bash
-$ pip install flake8 flake8-docstrings
-$ flake8 --install-hook
-```
+If you are using Windows as a development platform, make sure that you have the correct Microsoft Visual C++ build tools installed. Check the [Windows Compilers](https://wiki.python.org/moin/WindowsCompilers) section on the [Python website](https://www.python.org/) for details. Validation using `tox` will fail if this is not done correctly.
 
-The flake8-docstrings extension will check docstrings according to [PEP257](https://www.python.org/dev/peps/pep-0257/) when running flake8.
-
-### {% linkable_title Submitting improvements %}
-
-Improvements to Home Assistant should be submitted one feature at a time using GitHub [pull requests](https://help.github.com/articles/using-pull-requests).
-
- 1. From your fork, create a new branch to hold your changes
-    `git checkout -b some-feature`
- 2. Make the changes you want
- 3. Test your changes and check for style violations
-    `tox`
- 4. Commit the changes
-    `git add .`
-    `git commit -m "Added some-feature"`
- 5. Push your committed changes back to your fork on GitHub
-    `git push origin HEAD`
- 6. Follow [these steps](https://help.github.com/articles/creating-a-pull-request/) to create your pull request.
-
-### {% linkable_title Catching up with Reality %}
-
-If you're taking a while developing your feature request and would like to catch up with what's in the current Home Assistant dev branch, you can use git rebase to do so. This will pull the latest Home Assistant changes locally, rewind your commits, bring in the latest changes from Home Assistant and then replay all of your commits on top.
+Also, make sure to install or upgrade the `setuptools` Python package. It contains compatibility improvements and adds automatic use of compilers:
 
 ```bash
-# Run this from your feature branch
-$ git fetch upstream dev  # to pull the latest changes into a local dev branch
-$ git rebase upstream/dev # to put those changes into your feature branch before your changes
+$ pip install --upgrade setuptools
 ```
-
-If rebase detects conflicts, you can repeat the following process until all changes have been resolved:
-
-1. `git status` will show you the file with the conflict.
-2. Edit the file and resolving the lines between `<<<< | >>>>`
-3. Add the modified file `git add <file>` or `git add .`
-4. Continue rebase `git rebase --continue`
-5. Repeat until you've resolved all conflicts.
-
-### {% linkable_title Further reading %}
-
-- [Home Assistant Architecture](/developers/architecture/)
-- [Frontend development](/developers/frontend/)
-- [Creating a custom component](/developers/creating_components/)
-- [Adding support for a new platform](/developers/add_new_platform/)
-- [Rest API](/developers/api/)
-- [Server-sent events](/developers/server_sent_events/)
-- [Website](/developers/website/)
-- [Home Assitant on Github - CONTRIBUTING.md](https://github.com/home-assistant/home-assistant/blob/dev/CONTRIBUTING.md)

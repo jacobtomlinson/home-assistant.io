@@ -10,7 +10,7 @@ footer: true
 ha_category: Automation Examples
 ---
 
-This requires a [Foscam IP Camera](/components/camera.foscam/) camera with PTZ (Pan, Tilt, Zoom) and CGI functionality ([Source](http://www.ipcamcontrol.net/files/Foscam%20IPCamera%20CGI%20User%20Guide-V1.0.4.pdf)) 
+This requires a [Foscam IP Camera](/components/camera.foscam/) camera with PTZ (Pan, Tilt, Zoom) and CGI functionality ([Source](http://www.foscam.es/descarga/Foscam-IPCamera-CGI-User-Guide-AllPlatforms-2015.11.06.pdf)) 
 
 Foscam Cameras can be controlled by Home Assistant through a number of CGI commands. 
 The following outlines examples of the switch, services, and scripts required to move between 2 preset destinations while controlling motion detection, but many other options of movement are provided in the Foscam CGI User Guide linked above.
@@ -18,19 +18,19 @@ The following outlines examples of the switch, services, and scripts required to
 The `switch.foscam_motion` will control whether the motion detection is on or off. This switch supports `statecmd`, which checks the current state of motion detection.
 
 ```yaml
-# Replace admin and password with an "Admin" priviledged Foscam user
+# Replace admin and password with an "Admin" privileged Foscam user
 # Replace ipaddress with the local IP address of your Foscam
 switch:
  platform: command_line
  switches:
    #Switch for Foscam Motion Detection
    foscam_motion:
-     oncmd: 'curl -k "https://ipaddress:443/cgi-bin/CGIProxy.fcgi?cmd=setMotionDetectConfig&isEnable=1&usr=admin&pwd=password"'
-     offcmd: 'curl -k "https://ipaddress:443/cgi-bin/CGIProxy.fcgi?cmd=setMotionDetectConfig&isEnable=0&usr=admin&pwd=password"'
-     statecmd: 'curl -k --silent "https://ipaddress:443/cgi-bin/CGIProxy.fcgi?cmd=getMotionDetectConfig&usr=admin&pwd=password" | grep -oP "(?<=isEnable>).*?(?=</isEnable>)"'
-     value_template: '{{ value == "1" }}'
+     command_on: 'curl -k "https://ipaddress:443/cgi-bin/CGIProxy.fcgi?cmd=setMotionDetectConfig&isEnable=1&usr=admin&pwd=password"'
+     command_off: 'curl -k "https://ipaddress:443/cgi-bin/CGIProxy.fcgi?cmd=setMotionDetectConfig&isEnable=0&usr=admin&pwd=password"'
+     command_state: 'curl -k --silent "https://ipaddress:443/cgi-bin/CGIProxy.fcgi?cmd=getMotionDetectConfig&usr=admin&pwd=password" | grep -oP "(?<=isEnable>).*?(?=</isEnable>)"'
+     value_template: '{% raw %}{{ value == "1" }}{% endraw %}'
 ```
- 
+
 The service `shell_command.foscam_turn_off` sets the camera to point down and away to indicate it is not recording, and `shell_command.foscam_turn_on` sets the camera to point where I'd like to record. h of these services require preset points to be added to your camera. See source above for additional information.
 
 ```yaml

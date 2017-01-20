@@ -2,7 +2,7 @@
 layout: page
 title: "MySensors Sensor"
 description: "Instructions how to integrate MySensors sensors into Home Assistant."
-date: 2016-04-13 14:20 +0100
+date: 2016-10-01 15:00 +0200
 sidebar: true
 comments: false
 sharing: true
@@ -10,6 +10,7 @@ footer: true
 logo: mysensors.png
 ha_category: Sensor
 featured: false
+ha_iot_class: "Local Push"
 ---
 
 Integrates MySensors sensors into Home Assistant. See the [main component] for configuration instructions.
@@ -30,7 +31,7 @@ S_WEIGHT           | V_WEIGHT, V_IMPEDANCE
 S_POWER            | V_WATT, V_KWH
 S_DISTANCE         | V_DISTANCE
 S_LIGHT_LEVEL      | V_LIGHT_LEVEL
-S_IR               | V_IR_SEND, V_IR_RECEIVE
+S_IR               | V_IR_RECEIVE
 S_WATER            | V_FLOW, V_VOLUME
 S_AIR_QUALITY      | V_DUST_LEVEL
 S_CUSTOM           | V_VAR1, V_VAR2, V_VAR3, V_VAR4, V_VAR5
@@ -49,6 +50,15 @@ S_MOISTURE     | V_LEVEL
 S_LIGHT_LEVEL  | V_LEVEL
 S_AIR_QUALITY  | V_LEVEL (replaces V_DUST_LEVEL)
 S_DUST         | V_LEVEL (replaces V_DUST_LEVEL)
+
+##### MySensors version 2.0 and higher
+
+S_TYPE          | V_TYPE
+----------------|--------------------------
+S_INFO          | V_TEXT
+S_GAS           | V_FLOW, V_VOLUME
+S_GPS           | V_POSITION
+S_WATER_QUALITY | V_TEMP, V_PH, V_ORP, V_EC
 
 ### {% linkable_title Custom unit of measurement %}
 

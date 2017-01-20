@@ -15,19 +15,19 @@ First off, several community members have sanitized (read: without api keys/pass
 
 As commenting code doesn't always happen, please read on for the details.
 
-Now despite the logical assumption that the `configuration.yaml` will be replaced by this process it will in fact remain all be it in a much less cluttered form.
+Now despite the logical assumption that the `configuration.yaml` will be replaced by this process it will in fact remain, albeit in a much less cluttered form.
 
 In this lighter version we will still need what could be called the core snippet:
 
 ```yaml
 homeassistant:
   # Name of the location where Home Assistant is running
-  name: My Hass Instance
+  name: My Home Assistant Instance
   # Location required to calculate the time the sun rises and sets
   latitude: 37
   longitude: -121
-  # C for Celsius, F for Fahrenheit
-  temperature_unit: F
+  # 'metric' for Metric, 'imperial' for Imperial
+  unit_system: imperial
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: America/Los_Angeles
   customize: !include customize.yaml
@@ -58,18 +58,14 @@ zwave:
   config_path: /usr/local/share/python-openzwave/config
   polling_interval: 10000
 
-#zigbee:
-#  device: /dev/ttyUSB1
-#  baud: 115200
-
 mqtt:
   broker: 127.0.0.1
 ```
-As with the core snippet, indentation makes a difference. The component headers (`mqtt:`) should be fully left aligned (aka no indent), and the parameters (`port:`) should be indented two (2) spaces.
+As with the core snippet, indentation makes a difference. The component headers (`mqtt:`) should be fully left aligned (aka no indent), and the parameters (`broker:`) should be indented two (2) spaces.
 
 While some of these components can technically be moved to a separate file they are so small or "one off's" where splitting them off is superfluous. Also, you'll notice the # symbol (hash/pound). This represents a "comment" as far as the commands are interpreted. Put another way, any line prefixed with a `#` will be ignored. This makes breaking up files for human readability really convenient, not to mention turning off features while leaving the entry intact. (Look at the `zigbee:` entry above and the b entry further down)
 
-Now, lets assume that a blank file has been created in the hass configuration directory for each of the following:
+Now, lets assume that a blank file has been created in the Home Assistant configuration directory for each of the following:
 
 ```text
 automation.yaml
@@ -109,22 +105,19 @@ Let's look at the `device_tracker.yaml` file from our example:
   consider_home: 120
 ```
 
-This small example illustrates how the "split" files work. In this case, we start with a "comment block" identifying the file followed by two (2) device tracker entries (`owntracks` and `nmap`). These files follow ["style 1"](/getting-started/devices/#style-2-list-each-device-separately) that is to say a fully left aligned leading entry (`- platform: owntracks`) followed by the parameter entries indented two (2) spaces. 
+This small example illustrates how the "split" files work. In this case, we start with a "comment block" identifying the file followed by two (2) device tracker entries (`owntracks` and `nmap`). These files follow ["style 1"](/getting-started/devices/#style-2-list-each-device-separately) that is to say a fully left aligned leading entry (`- platform: owntracks`) followed by the parameter entries indented two (2) spaces.
 
 This (large) sensor configuration gives us another example:
 
 ```yaml
 ### sensors.yaml
-##############################################################
-### METEOBRIDGE                                           ####
-##############################################################
-
+### METEOBRIDGE #############################################
 - platform: tcp
   name: 'Outdoor Temp (Meteobridge)'
   host: 192.168.2.82
   timeout: 6
   payload: "Content-type: text/xml; charset=UTF-8\n\n"
-  value_template: "{{value.split (' ')[2]}}"
+  value_template: "{% raw %}{{value.split (' ')[2]}}{% endraw %}"
   unit: C
 - platform: tcp
   name: 'Outdoor Humidity (Meteobridge)'
@@ -132,29 +125,16 @@ This (large) sensor configuration gives us another example:
   port: 5556
   timeout: 6
   payload: "Content-type: text/xml; charset=UTF-8\n\n"
-  value_template: "{{value.split (' ')[3]}}"
+  value_template: "{% raw %}{{value.split (' ')[3]}}{% endraw %}"
   unit: Percent
-- platform: tcp
-  name: 'Outdoor Dewpoint (Meteobridge)'
-  host: 192.168.2.82
-  port: 5556
-  timeout: 6
-  payload: "Content-type: text/xml; charset=UTF-8\n\n"
-  value_template: "{{value.split (' ')[4] }}"
-  unit: C
-###################################
-#### STEAM FRIENDS            ####
-##################################
 
+#### STEAM FRIENDS ##################################
 - platform: steam_online
   api_key: [not telling]
   accounts:
       - 76561198012067051
 
-##################################
-####     TIME/DATE            ####
-##################################
-
+#### TIME/DATE ##################################
 - platform: time_date
   display_options:
       - 'time'
@@ -162,12 +142,6 @@ This (large) sensor configuration gives us another example:
 - platform: worldclock
   time_zone: Etc/UTC
   name: 'UTC'
-- platform: worldclock
-  time_zone: America/New_York
-  name: 'Ann Arbor'
-- platform: worldclock
-  time_zone: Europe/Vienna
-  name: 'Innsbruck'
 - platform: worldclock
   time_zone: America/New_York
   name: 'Ann Arbor'
@@ -179,14 +153,290 @@ That about wraps it up.
 
 If you have issues checkout `home-assistant.log` in the configuration directory as well as your indentations. If all else fails, head over to the [Gitter Chatroom](https://gitter.im/balloob/home-assistant) and ask away.
 
-### {% linkable_title Advanced usage %}
+### {% linkable_title Debugging multiple configuration files %}
+
+If you have many configuration files, the `check_config` script allows you to see how Home Assistant interprets them:
+- Listing all loaded files: `hass --script check_config --files`
+- Viewing a component's config: `hass --script check_config --info light`
+- Or all components' config:  `hass --script check_config --info all`
+
+You can get help from the command line using: `hass --script check_config --help`
+
+### {% linkable_title Advanced Usage %}
 
 We offer four advanced options to include whole directories at once.
+- `!include_dir_list` will return the content of a directory as a list with each file content being an entry in the list.
+- `!include_dir_named` will return the content of a directory as a dictionary which maps filename => content of file.
+- `!include_dir_merge_list` will return the content of a directory as a list by merging all files (which should contain a list) into 1 big list.
+- `!include_dir_merge_named` will return the content of a directory as a dictionary by loading each file and merging it into 1 big dictionary.
 
-`!include_dir_list` will return content of a directory as a list with each file content being an entry in the list.
+These work recursively. As an example using `!include_dir_* automation`, will include all 6 files shown below:
 
-`!include_dir_named` will return content of a directory as a dictionary which maps filename => content of file.
+```bash
+.
+└── .homeassistant
+    ├── automation
+    │   ├── lights
+    │   │   ├── turn_light_off_bedroom.yaml
+    │   │   ├── turn_light_off_lounge.yaml
+    │   │   ├── turn_light_on_bedroom.yaml
+    │   │   └── turn_light_on_lounge.yaml
+    │   ├── say_hello.yaml
+    │   └── sensors
+    │       └── react.yaml
+    └── configuration.yaml (not included)
+```
 
-`!include_dir_merge_list` will return content of a directory as a list by merging all files (which should contain a list) into 1 big list.
+#### {% linkable_title Example: `!include_dir_list` %}
 
-`!include_dir_merge_named` will return content of a directory as a dictionary by loading each file and merging it into 1 big dictionary.
+`configuration.yaml`
+
+```yaml
+automation:
+  - alias: Automation 1
+    trigger:
+      platform: state
+      entity_id: device_tracker.iphone
+      to: 'home'
+    action:
+      service: light.turn_on
+      entity_id: light.entryway
+  - alias: Automation 2
+    trigger:
+      platform: state
+      entity_id: device_tracker.iphone
+      from: 'home'
+    action:
+      service: light.turn_off
+      entity_id: light.entryway
+```
+
+can be turned into:
+
+`configuration.yaml`
+
+```yaml
+automation: !include_dir_list automation/presence/
+```
+
+`automation/presence/automation1.yaml`
+
+```yaml
+alias: Automation 1
+trigger:
+  platform: state
+  entity_id: device_tracker.iphone
+  to: 'home'
+action:
+  service: light.turn_on
+  entity_id: light.entryway
+```
+
+`automation/presence/automation2.yaml`
+
+```yaml
+alias: Automation 2
+trigger:
+  platform: state
+  entity_id: device_tracker.iphone
+  from: 'home'
+action:
+  service: light.turn_off
+  entity_id: light.entryway
+```
+
+It is important to note that each file must contain only **one** entry when using `!include_dir_list`.
+
+#### {% linkable_title Example: `!include_dir_named` %}
+
+`configuration.yaml`
+
+```yaml
+{% raw %}
+alexa:
+  intents:
+    LocateIntent:
+      action:
+        service: notify.pushover
+        data:
+          message: Your location has been queried via Alexa.
+      speech:
+        type: plaintext
+        text: >
+          {%- for state in states.device_tracker -%}
+            {%- if state.name.lower() == User.lower() -%}
+              {{ state.name }} is at {{ state.state }}
+            {%- endif -%}
+          {%- else -%}
+            I am sorry. Pootie! I do not know where {{User}} is.
+          {%- endfor -%}
+    WhereAreWeIntent:
+      speech:
+        type: plaintext
+        text: >
+          {%- if is_state('device_tracker.iphone', 'home') -%}
+            iPhone is home.
+          {%- else -%}
+            iPhone is not home.
+          {% endif %}{% endraw %}
+```
+
+can be turned into:
+
+`configuration.yaml`
+
+```yaml
+alexa:
+  intents: !include_dir_named alexa/
+```
+
+`alexa/LocateIntent.yaml`
+
+```yaml
+{% raw %}
+action:
+  service: notify.pushover
+  data:
+    message: Your location has been queried via Alexa.
+speech:
+  type: plaintext
+  text: >
+    {%- for state in states.device_tracker -%}
+      {%- if state.name.lower() == User.lower() -%}
+        {{ state.name }} is at {{ state.state }}
+      {%- endif -%}
+    {%- else -%}
+      I am sorry. Pootie! I do not know where {{User}} is.
+    {%- endfor -%}{% endraw %}
+```
+
+`alexa/WhereAreWeIntent.yaml`
+
+```yaml
+{% raw %}
+speech:
+  type: plaintext
+  text: >
+    {%- if is_state('device_tracker.iphone', 'home') -%}
+      iPhone is home.
+    {%- else -%}
+      iPhone is not home.
+    {% endif %}{% endraw %}
+```
+
+#### {% linkable_title Example: `!include_dir_merge_list` %}
+
+`configuration.yaml`
+
+```yaml
+automation:
+  - alias: Automation 1
+    trigger:
+      platform: state
+      entity_id: device_tracker.iphone
+      to: 'home'
+    action:
+      service: light.turn_on
+      entity_id: light.entryway
+  - alias: Automation 2
+    trigger:
+      platform: state
+      entity_id: device_tracker.iphone
+      from: 'home'
+    action:
+      service: light.turn_off
+      entity_id: light.entryway
+```
+
+can be turned into:
+
+`configuration.yaml`
+
+```yaml
+automation: !include_dir_merge_list automation/
+```
+
+`automation/presence.yaml`
+
+```yaml
+- alias: Automation 1
+  trigger:
+    platform: state
+    entity_id: device_tracker.iphone
+    to: 'home'
+  action:
+    service: light.turn_on
+    entity_id: light.entryway
+- alias: Automation 2
+  trigger:
+    platform: state
+    entity_id: device_tracker.iphone
+    from: 'home'
+  action:
+    service: light.turn_off
+    entity_id: light.entryway
+```
+
+It is important to note that when using `!include_dir_merge_list`, you must include a list in each file (each list item is denoted with a hyphen [-]). Each file may contain one or more entries.
+
+#### {% linkable_title Example: `!include_dir_merge_named` %}
+
+`configuration.yaml`
+
+```yaml
+group:
+  bedroom:
+    name: Bedroom
+    entities:
+      - light.bedroom_lamp
+      - light.bedroom_overhead
+  hallway:
+    name: Hallway
+    entities:
+      - light.hallway
+      - thermostat.home
+  front_yard:
+    name: Front Yard
+    entities:
+      - light.front_porch
+      - light.security
+      - light.pathway
+      - sensor.mailbox
+      - camera.front_porch
+```
+
+can be turned into:
+
+`configuration.yaml`
+
+```yaml
+group: !include_dir_merge_named group/
+```
+
+`group/interior.yaml`
+
+```yaml
+bedroom:
+  name: Bedroom
+  entities:
+    - light.bedroom_lamp
+    - light.bedroom_overhead
+hallway:
+  name: Hallway
+  entities:
+    - light.hallway
+    - thermostat.home
+```
+
+`group/exterior.yaml`
+
+```yaml
+front_yard:
+  name: Front Yard
+  entities:
+    - light.front_porch
+    - light.security
+    - light.pathway
+    - sensor.mailbox
+    - camera.front_porch
+```

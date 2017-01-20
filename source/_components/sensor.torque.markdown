@@ -8,8 +8,8 @@ comments: false
 sharing: true
 footer: true
 logo: torque.png
-ha_category: Sensor
-ha_release: 0.10
+ha_category: Transport
+ha_release: "0.10"
 ---
 
 The `torque` platform will allow you to monitor [Torque](http://torque-bhp.com/) data relayed from a bluetooth OBD2 stick via the Torque mobile application.
@@ -40,12 +40,11 @@ Add the following to your `configuration.yaml` file:
 ```yaml
 # Example configuration.yaml entry
 sensor:
-  platform: torque
-  name: Your Vehicle Name
-  email: your_configured@email.com
+  - platform: torque
+    email: your_configured@email.com
 ```
 
 Configuration variables:
 
-- **name** (*Required*): Vehicle name (your choice).
-- **email**: Email address configured in Torque application.
+- **name** (*Optional*): Vehicle name (your choice).
+- **email**  (*Required*): Email address configured in Torque application.
